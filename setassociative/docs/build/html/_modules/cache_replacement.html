@@ -1,0 +1,288 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>cache_replacement &#8212; SetAssociativeCache 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for cache_replacement</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">File: cache_replacement.py</span>
+
+<span class="sd">Author: Priyanka Selvarathinavel</span>
+
+<span class="sd">Contains abstract Cache class followed by specialized cache classes</span>
+<span class="sd">based on replacement strategies.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">abc</span> <span class="k">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">import</span> <span class="nn">setassociative.exceptions</span> <span class="k">as</span> <span class="nn">exceptions</span>
+
+
+<div class="viewcode-block" id="Cache"><a class="viewcode-back" href="../index.html#cache_replacement.Cache">[docs]</a><span class="k">class</span> <span class="nc">Cache</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Abstract class for caches of different replacement strategies</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">set_count</span><span class="p">,</span> <span class="n">set_size</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param set_count: Number of sets</span>
+<span class="sd">        :type set_count: int</span>
+<span class="sd">        :param set_size: Number of cache entries in a set</span>
+<span class="sd">        :type set_size: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">contents</span> <span class="o">=</span> <span class="p">[</span><span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
+                         <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">set_count</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_count</span> <span class="o">=</span> <span class="n">set_count</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_size</span> <span class="o">=</span> <span class="n">set_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">key_type</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">value_type</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+
+<span class="sd">    def print_contents(self):</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        Displays contents of the cache. Debugging purposes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        i = 0</span>
+<span class="sd">        print(&#39;=======&#39;)</span>
+<span class="sd">        for set_ in self.contents:</span>
+<span class="sd">            print(&#39;---Set:&#39; + str(i) + &#39;---&#39;)</span>
+<span class="sd">            for key in set_:</span>
+<span class="sd">                print(str(key) + &#39;-&gt;&#39; + str(set_[key]))</span>
+<span class="sd">            i = i + 1</span>
+<span class="sd">        print(&#39;=======&#39;)</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="Cache.get_set"><a class="viewcode-back" href="../index.html#cache_replacement.Cache.get_set">[docs]</a>    <span class="k">def</span> <span class="nf">get_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates set value for a new key.</span>
+
+<span class="sd">        :param key: Key to be inserted</span>
+<span class="sd">        :type key: any</span>
+<span class="sd">        :return: tag value, set value</span>
+<span class="sd">        :rtype: int, int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tag</span> <span class="o">=</span> <span class="nb">hash</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
+        <span class="n">set_</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_count</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">set_</span></div>
+
+<div class="viewcode-block" id="Cache.strategy_to_replace"><a class="viewcode-back" href="../index.html#cache_replacement.Cache.strategy_to_replace">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">strategy_to_replace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">set_</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Abstract method. Must be implemented by subclasses.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="Cache.put"><a class="viewcode-back" href="../index.html#cache_replacement.Cache.put">[docs]</a>    <span class="k">def</span> <span class="nf">put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Inserts a new key into the cache</span>
+
+<span class="sd">        :param key: Key to be inserted</span>
+<span class="sd">        :type key: any</span>
+<span class="sd">        :param value: Value for the key to be inserted</span>
+<span class="sd">        :type value: any</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">key_type</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">key_type</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">value_type</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">key_type</span><span class="p">)</span> <span class="ow">and</span>
+                    <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_type</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">TypeError</span><span class="p">(</span><span class="s1">&#39;Either key or value &#39;</span>
+                                       <span class="s1">&#39;does not match the &#39;</span>
+                                       <span class="s1">&#39;existing key value types&#39;</span><span class="p">)</span>
+
+        <span class="n">set_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_set</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">contents</span><span class="p">[</span><span class="n">set_</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">contents</span><span class="p">[</span><span class="n">set_</span><span class="p">]</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contents</span><span class="p">[</span><span class="n">set_</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_size</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">strategy_to_replace</span><span class="p">(</span><span class="n">set_</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contents</span><span class="p">[</span><span class="n">set_</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_size</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">ReplacementStrategyException</span>\
+                <span class="p">(</span><span class="s1">&#39;Replacement strategy has not removed an element&#39;</span><span class="p">)</span>
+
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">contents</span><span class="p">[</span><span class="n">set_</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="c1"># self.print_contents()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Successfully inserted data&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Cache.get"><a class="viewcode-back" href="../index.html#cache_replacement.Cache.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns value in cache for a given key.</span>
+
+<span class="sd">        :param key: Key we need value for</span>
+<span class="sd">        :type key: any</span>
+<span class="sd">        :return: (True, value of key)  or (False ,None)</span>
+<span class="sd">        :rtype: bool, any</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">set_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_set</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">contents</span><span class="p">[</span><span class="n">set_</span><span class="p">]:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">contents</span><span class="p">[</span><span class="n">set_</span><span class="p">]</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">contents</span><span class="p">[</span><span class="n">set_</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="c1"># self.print_contents()</span>
+            <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="n">value</span>
+
+        <span class="c1"># self.print_contents()</span>
+        <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">None</span></div></div>
+
+
+<div class="viewcode-block" id="LRUcache"><a class="viewcode-back" href="../index.html#cache_replacement.LRUcache">[docs]</a><span class="k">class</span> <span class="nc">LRUcache</span><span class="p">(</span><span class="n">Cache</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Specialized class for LRU replacement strategy cache.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="LRUcache.strategy_to_replace"><a class="viewcode-back" href="../index.html#cache_replacement.LRUcache.strategy_to_replace">[docs]</a>    <span class="k">def</span> <span class="nf">strategy_to_replace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">set_</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deletes item in cache set according to LRU strategy</span>
+
+<span class="sd">        :param set_: cache set to delete from</span>
+<span class="sd">        :type set_: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">contents</span><span class="p">[</span><span class="n">set_</span><span class="p">]</span><span class="o">.</span><span class="n">popitem</span><span class="p">(</span><span class="n">last</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="MRUcache"><a class="viewcode-back" href="../index.html#cache_replacement.MRUcache">[docs]</a><span class="k">class</span> <span class="nc">MRUcache</span><span class="p">(</span><span class="n">Cache</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Specialized class for MRU replacement strategy cache.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="MRUcache.strategy_to_replace"><a class="viewcode-back" href="../index.html#cache_replacement.MRUcache.strategy_to_replace">[docs]</a>    <span class="k">def</span> <span class="nf">strategy_to_replace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">set_</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deletes item in cache set according to MRU strategy</span>
+
+<span class="sd">        :param set_: cache set to delete from</span>
+<span class="sd">        :type set_: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">contents</span><span class="p">[</span><span class="n">set_</span><span class="p">]</span><span class="o">.</span><span class="n">popitem</span><span class="p">(</span><span class="n">last</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="CustomCache"><a class="viewcode-back" href="../index.html#cache_replacement.CustomCache">[docs]</a><span class="k">class</span> <span class="nc">CustomCache</span><span class="p">(</span><span class="n">Cache</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">       Specialized class for CUSTOM replacement strategy cache.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">set_count</span><span class="p">,</span> <span class="n">set_size</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Specialized class to accommodate custom cache</span>
+<span class="sd">        replacement strategy</span>
+
+<span class="sd">        :param set_count: Number of sets in the cache</span>
+<span class="sd">        :type set_count: int</span>
+<span class="sd">        :param set_size: Number of cache entries in a set</span>
+<span class="sd">        :type set_size: int</span>
+<span class="sd">        :param callback: User defined method that removes</span>
+<span class="sd">        an element from a cache set</span>
+<span class="sd">        :type callback: argument: OrderedDict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">set_count</span><span class="p">,</span> <span class="n">set_size</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">callback</span> <span class="o">=</span> <span class="n">callback</span>
+
+<div class="viewcode-block" id="CustomCache.strategy_to_replace"><a class="viewcode-back" href="../index.html#cache_replacement.CustomCache.strategy_to_replace">[docs]</a>    <span class="k">def</span> <span class="nf">strategy_to_replace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">set_</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calls provided callback function that Removes an element</span>
+<span class="sd">        from the cache set</span>
+
+<span class="sd">        :param set_: cache set to delete from</span>
+<span class="sd">        :type set_: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">callback</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contents</span><span class="p">[</span><span class="n">set_</span><span class="p">])</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">SetAssociativeCache</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Usage Tutorial</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Priyanka Selvarathinavel.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

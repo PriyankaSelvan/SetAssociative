@@ -1,0 +1,292 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Welcome to SetAssociativeCache’s documentation! &#8212; SetAssociativeCache 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Usage Tutorial" href="tutorial.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="welcome-to-setassociativecache-s-documentation">
+<h1>Welcome to SetAssociativeCache’s documentation!<a class="headerlink" href="#welcome-to-setassociativecache-s-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Usage Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#lru-cache">LRU Cache</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#mru-cache">MRU Cache</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#custom-cache">Custom Cache</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="module-cache">
+<span id="setassociative-cache"></span><h1>SetAssociative cache<a class="headerlink" href="#module-cache" title="Permalink to this headline">¶</a></h1>
+<p>File: cache.py</p>
+<p>Author: Priyanka Selvarathinavel</p>
+<p>Contains method to instantiate required cache.</p>
+<dl class="function">
+<dt id="cache.create_cache">
+<code class="descclassname">cache.</code><code class="descname">create_cache</code><span class="sig-paren">(</span><em>set_count</em>, <em>set_size</em>, <em>strategy='LRU'</em>, <em>callback=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cache.html#create_cache"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cache.create_cache" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns instantiated specialized cache object based on strategy.</p>
+<p>Raises exceptions.IncorrectConfigurationException
+for invalid strategy.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>set_count</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of sets in the cache</li>
+<li><strong>set_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of entries in a cache set</li>
+<li><strong>strategy</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Replacement strategy ‘LRU’, ‘MRU’ or ‘CUSTOM’</li>
+<li><strong>callback</strong> (<em>argument: OrderedDict</em>) – Method that removes an element from a cache set</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Specialized cache object</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">subclasses of cacheReplacement.Cache</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-cache_replacement">
+<span id="setassociative-cache-replacement"></span><h1>SetAssociative cache_replacement<a class="headerlink" href="#module-cache_replacement" title="Permalink to this headline">¶</a></h1>
+<p>File: cache_replacement.py</p>
+<p>Author: Priyanka Selvarathinavel</p>
+<p>Contains abstract Cache class followed by specialized cache classes
+based on replacement strategies.</p>
+<dl class="class">
+<dt id="cache_replacement.Cache">
+<em class="property">class </em><code class="descclassname">cache_replacement.</code><code class="descname">Cache</code><span class="sig-paren">(</span><em>set_count</em>, <em>set_size</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cache_replacement.html#Cache"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cache_replacement.Cache" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract class for caches of different replacement strategies</p>
+<dl class="method">
+<dt id="cache_replacement.Cache.get">
+<code class="descname">get</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cache_replacement.html#Cache.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cache_replacement.Cache.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns value in cache for a given key.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#any" title="(in Python v3.7)"><em>any</em></a>) – Key we need value for</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">(True, value of key)  or (False ,None)</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)">bool</a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#any" title="(in Python v3.7)">any</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cache_replacement.Cache.get_set">
+<code class="descname">get_set</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cache_replacement.html#Cache.get_set"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cache_replacement.Cache.get_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates set value for a new key.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#any" title="(in Python v3.7)"><em>any</em></a>) – Key to be inserted</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">tag value, set value</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)">int</a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)">int</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cache_replacement.Cache.put">
+<code class="descname">put</code><span class="sig-paren">(</span><em>key</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cache_replacement.html#Cache.put"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cache_replacement.Cache.put" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inserts a new key into the cache</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#any" title="(in Python v3.7)"><em>any</em></a>) – Key to be inserted</li>
+<li><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#any" title="(in Python v3.7)"><em>any</em></a>) – Value for the key to be inserted</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cache_replacement.Cache.strategy_to_replace">
+<code class="descname">strategy_to_replace</code><span class="sig-paren">(</span><em>set_</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cache_replacement.html#Cache.strategy_to_replace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cache_replacement.Cache.strategy_to_replace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract method. Must be implemented by subclasses.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cache_replacement.CustomCache">
+<em class="property">class </em><code class="descclassname">cache_replacement.</code><code class="descname">CustomCache</code><span class="sig-paren">(</span><em>set_count</em>, <em>set_size</em>, <em>callback</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cache_replacement.html#CustomCache"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cache_replacement.CustomCache" title="Permalink to this definition">¶</a></dt>
+<dd><p>Specialized class for CUSTOM replacement strategy cache.</p>
+<dl class="method">
+<dt id="cache_replacement.CustomCache.strategy_to_replace">
+<code class="descname">strategy_to_replace</code><span class="sig-paren">(</span><em>set_</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cache_replacement.html#CustomCache.strategy_to_replace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cache_replacement.CustomCache.strategy_to_replace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calls provided callback function that Removes an element
+from the cache set</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>set</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – cache set to delete from</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cache_replacement.LRUcache">
+<em class="property">class </em><code class="descclassname">cache_replacement.</code><code class="descname">LRUcache</code><span class="sig-paren">(</span><em>set_count</em>, <em>set_size</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cache_replacement.html#LRUcache"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cache_replacement.LRUcache" title="Permalink to this definition">¶</a></dt>
+<dd><p>Specialized class for LRU replacement strategy cache.</p>
+<dl class="method">
+<dt id="cache_replacement.LRUcache.strategy_to_replace">
+<code class="descname">strategy_to_replace</code><span class="sig-paren">(</span><em>set_</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cache_replacement.html#LRUcache.strategy_to_replace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cache_replacement.LRUcache.strategy_to_replace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes item in cache set according to LRU strategy</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>set</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – cache set to delete from</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cache_replacement.MRUcache">
+<em class="property">class </em><code class="descclassname">cache_replacement.</code><code class="descname">MRUcache</code><span class="sig-paren">(</span><em>set_count</em>, <em>set_size</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cache_replacement.html#MRUcache"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cache_replacement.MRUcache" title="Permalink to this definition">¶</a></dt>
+<dd><p>Specialized class for MRU replacement strategy cache.</p>
+<dl class="method">
+<dt id="cache_replacement.MRUcache.strategy_to_replace">
+<code class="descname">strategy_to_replace</code><span class="sig-paren">(</span><em>set_</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cache_replacement.html#MRUcache.strategy_to_replace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cache_replacement.MRUcache.strategy_to_replace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes item in cache set according to MRU strategy</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>set</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – cache set to delete from</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></li>
+<li><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></li>
+<li><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="#">SetAssociativeCache</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Usage Tutorial</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+      <li>Next: <a href="tutorial.html" title="next chapter">Usage Tutorial</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Priyanka Selvarathinavel.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

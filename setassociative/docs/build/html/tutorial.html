@@ -1,0 +1,202 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Usage Tutorial &#8212; SetAssociativeCache 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Welcome to SetAssociativeCache’s documentation!" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="usage-tutorial">
+<h1>Usage Tutorial<a class="headerlink" href="#usage-tutorial" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="lru-cache">
+<h2>LRU Cache<a class="headerlink" href="#lru-cache" title="Permalink to this headline">¶</a></h2>
+<p>Least recently used items are discarded when a cache set is full.
+To instantiate this type of cache, the number of sets and the
+number of entries in each set is required.</p>
+<p>A usage example is given below</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">setassociative.cache</span>
+
+<span class="c1"># Arguments: number of sets, set size, strategy</span>
+<span class="n">lru_cache</span> <span class="o">=</span> <span class="n">setassociative</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">create_cache</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;LRU&#39;</span><span class="p">)</span>
+
+<span class="c1"># Putting value. Needs key, value as arguments</span>
+<span class="n">lru_cache</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;two&#39;</span><span class="p">)</span>
+
+<span class="c1"># Getting. Requires key. Returns a boolean (True if cache hit)</span>
+<span class="c1"># with the value</span>
+<span class="c1"># Value is None if cache miss</span>
+<span class="n">hit</span><span class="p">,</span> <span class="n">val</span> <span class="o">=</span> <span class="n">lru_cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">hit</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Value:&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Cache miss!&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="mru-cache">
+<h2>MRU Cache<a class="headerlink" href="#mru-cache" title="Permalink to this headline">¶</a></h2>
+<p>Most recently used items are discarded when a cache set is full.
+To instantiate this type of cache, the number of sets and the
+number of entries in each set is required.</p>
+<p>A usage example is given below</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">setassociative.cache</span>
+
+<span class="c1"># Arguments: number of sets, set size, strategy</span>
+<span class="n">mru_cache</span> <span class="o">=</span> <span class="n">setassociative</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">create_cache</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;MRU&#39;</span><span class="p">)</span>
+
+<span class="c1"># Putting value. Needs key, value as arguments</span>
+<span class="n">mru_cache</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;two&#39;</span><span class="p">)</span>
+
+<span class="c1"># Getting. Requires key. Returns a boolean (True if cache hit)</span>
+<span class="c1"># with the value</span>
+<span class="c1"># Value is None if cache miss</span>
+<span class="n">hit</span><span class="p">,</span> <span class="n">val</span> <span class="o">=</span> <span class="n">mru_cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">hit</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Value:&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Cache miss!&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="custom-cache">
+<h2>Custom Cache<a class="headerlink" href="#custom-cache" title="Permalink to this headline">¶</a></h2>
+<p>A cache with a custom replacement strategy can be implemented.
+To instantiate this type of cache, the number of sets and the
+number of entries in each set is required.
+Along with this, a callback function has to be passed implementing
+the replacement strategy.</p>
+<div class="section" id="writing-custom-replacement-callback">
+<h3>Writing custom replacement callback<a class="headerlink" href="#writing-custom-replacement-callback" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Write a method that takes just one argument of type collections.OrderedDict</li>
+<li>This will be the cache set from where one entry has to be discarded</li>
+<li>Write method body that discards required item from the OrderedDict</li>
+<li>The OrderedDict is ordered by the order of access (put and get) in the cache set</li>
+</ul>
+<p>A usage example is given below</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">setassociative.cache</span>
+
+<span class="c1"># Custom callback popping the first item in</span>
+<span class="c1"># the collections.OrderedDict</span>
+<span class="k">def</span> <span class="nf">my_callback</span><span class="p">(</span><span class="n">the_set</span><span class="p">):</span>
+    <span class="n">the_set</span><span class="o">.</span><span class="n">popitem</span><span class="p">(</span><span class="n">last</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># Arguments: number of sets, set size, strategy, callback</span>
+<span class="n">custom_cache</span> <span class="o">=</span> <span class="n">setassociative</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">create_cache</span>
+               <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;CUSTOM&#39;</span><span class="p">,</span> <span class="n">my_callback</span><span class="p">)</span>
+
+<span class="c1"># Putting value. Needs key, value as arguments</span>
+<span class="n">custom_cache</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;two&#39;</span><span class="p">)</span>
+
+<span class="c1"># Getting. Requires key. Returns a boolean (True if cache hit)</span>
+<span class="c1"># with the value</span>
+<span class="c1"># Value is None if cache miss</span>
+<span class="n">hit</span><span class="p">,</span> <span class="n">val</span> <span class="o">=</span> <span class="n">custom_cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">hit</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Value:&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Cache miss!&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">SetAssociativeCache</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Usage Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#lru-cache">LRU Cache</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mru-cache">MRU Cache</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#custom-cache">Custom Cache</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Welcome to SetAssociativeCache’s documentation!</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Priyanka Selvarathinavel.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/tutorial.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
